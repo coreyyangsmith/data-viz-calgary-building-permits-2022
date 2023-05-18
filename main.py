@@ -41,9 +41,10 @@ import geopandas as gpd
 import folium
 
 ###############################################################################
-#### DATA IMPORT
+#### DATA IMPORT & MANAGEMENT
 ###############################################################################
 
+#Importing bp and creating bp_trimmed
 bp_file = "building_permits.csv"
 bp = gpd.read_file(bp_file)
 
@@ -53,34 +54,97 @@ bp.drop('LocationTypes', axis=1, inplace=True)
 bp.drop('LocationAddresses', axis=1, inplace=True)
 bp.drop('LocationsGeoJSON', axis=1, inplace=True)
 
-print(bp.dtypes)
+bp_dtypes = pd.DataFrame()
 
+
+#Creating .unique values dataframe
 print("\nUnique Perrmit Types")
-print(bp['PermitType'].unique())
+PermitType = pd.DataFrame()
+PermitType['PermitType'] = bp['PermitType'].unique()
 
 print("\nUnique Perrmit Type Mapped")
-print(bp['PermitTypeMapped'].unique())
+PermitTypeMapped = pd.DataFrame()
+PermitTypeMapped['PermitTypeMapped'] = bp['PermitTypeMapped'].unique()
 
 print("\nPermit Class")
-print(bp['PermitClass'].unique())
+PermitClass = pd.DataFrame()
+PermitClass['PermitClass'] = bp['PermitClass'].unique()
 
 print("\nPermit Class Group")
-print(bp['PermitClassGroup'].unique())
+PermitClassGroup = pd.DataFrame()
+PermitClassGroup['PermitClassGroup'] = bp['PermitClassGroup'].unique()
 
 print("\nPermit Class Mapped")
-print(bp['PermitClassMapped'].unique())
+PermitClassMapped = pd.DataFrame()
+PermitClassMapped['PermitClassMapped'] = bp['PermitClassMapped'].unique()
 
 print("\nWork Class")
-print(bp['WorkClass'].unique())
+WorkClass = pd.DataFrame()
+WorkClass['WorkClass'] = bp['WorkClass'].unique()
 
 print("\nWork Class Group")
-print(bp['WorkClassGroup'].unique())
+WorkClassGroup = pd.DataFrame()
+WorkClassGroup['WorkClassGroup'] = bp['WorkClassGroup'].unique()
 
 print("\nWork Class Mapped")
-print(bp['WorkClassMapped'].unique())
+WorkClassMapped = pd.DataFrame()
+WorkClassMapped['WorkClassMapped'] = bp['WorkClassMapped'].unique()
 
 print("\nApplicant Name")
-print(bp['ApplicantName'].unique())
+ApplicantName = pd.DataFrame()
+ApplicantName['ApplicantName'] = bp['ApplicantName'].unique()
 
 print("\nContractor Name")
-print(bp['ContractorName'].unique())
+ContractorName = pd.DataFrame()
+ContractorName['ContractorName'] = bp['ContractorName'].unique()
+
+bp_dtypes = pd.concat([PermitType, PermitTypeMapped, PermitClass,
+                       PermitClassGroup, PermitClassMapped,
+                       WorkClass, WorkClassGroup, WorkClassMapped,
+                       ApplicantName, ContractorName], axis=1)
+
+
+# Creating bp_res_only
+bp_res_only = bp[bp['PermitClassMapped'] == "Residential"] # this line doesnt work
+
+
+# Save Files
+bp_dtypes.to_csv("bp_dtypes.csv")
+bp.to_file("bp_trimmed.csv")
+bp_res_only.to_file("bp_res_only.csv") # this line is not working because of the above line
+
+print("#############")
+print("Code Complete")
+print("#############")
+
+######################################################################
+##### BAR CHART #####
+#####################
+##### COMPARING PermitType (by Quantity) AND (by Construction Cost)
+##### % Single Construction Permit
+##### % Residential Improvement Project
+##### % Demolition
+##### % Commercial / Multi Family Project
+##### % Environmental Restoration Permit
+######################################################################
+
+######################################################################
+##### PermitTypeMapped (by Quantity) AND (by Construction Cost)
+######################################################################
+
+######################################################################
+#### PermitClass (by Type) AND (by Construction Cost)
+######################################################################
+
+######################################################################
+#### PermitClassGroup (by Type) AND (by Construction Cost)
+######################################################################
+
+######################################################################
+#### Create bp_res_only
+#### Map out information previous with residential only...?
+######################################################################
+
+######################################################################
+#### WorkClass (by Type) AND (by Construction Cost) AND (Avg Construction Cost?)
+######################################################################
